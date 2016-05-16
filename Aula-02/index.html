@@ -1,0 +1,100 @@
+<html ng-app="listaTelefonica">
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	<title>Lista Telefônica</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+
+	<style type="text/css">
+		.jumbotron{
+			width: 400px;
+			/*height: 150px;*/
+			background-color: #DCDCDC;
+			text-align: center;
+			margin-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.table{
+			margin-top: 20px;
+		}
+	</style>
+	
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+
+
+
+	<script type="text/javascript">
+		angular.module("listaTelefonica", []);
+
+		angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function($scope){
+			$scope.app = "Lista Telefônica";
+			$scope.contatos = [
+				{nome:"Marco", telefone: "99990000"},
+				{nome:"Paulo", telefone: "99990001"},
+				{nome:"Jefferson", telefone: "99990002"}
+			];
+			$scope.adicinarContato = function (contato){
+				$scope.contatos.push(angular.copy(contato));
+				delete $scope.contato;
+			};
+		});
+
+
+
+	</script>
+
+</head>
+<body ng-controller="listaTelefonicaCtrl">
+
+	<div class="jumbotron">
+		<h4>{{app}}</h4>
+		<table class="table striped">
+			<tr>
+				<th>Nome</th>
+				<th>Telefone</th>
+			</tr>
+			<tr ng-repeat="contato in contatos">
+				<td>{{contato.nome}}</td>
+				<td>{{contato.telefone}}</td>
+			</tr>
+		</table>
+
+		<hr />
+		<div class="row">
+			<form class="col s12">
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="nome" type="text" class="validate" ng-model="contato.nome">
+						<label for="nome">Nome</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="telefone" type="text" class="validate" ng-model="contato.telefone">
+						<label for="telefone">Telefone</label>
+					</div>
+				</div>
+
+				<button class="btn btn-large blue waves-effect waves-light col s12" ng-click="adicinarContato(contato)">Adicionar Contato</button>
+			</form>
+
+		</div>
+
+
+	</div>
+
+
+
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script> 
+
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<html ng-app="listaTelefonica">
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	<title>Lista Telefônica</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+
+	<style type="text/css">
+		.jumbotron{
+			width: 400px;
+			height: 1050px;
+			background-color: #DCDCDC;
+			text-align: center;
+			margin-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.table{
+			margin-top: 20px;
+		}
+		.selecionado {
+			background-color: yellow;
+		}
+		.negrito {
+			font-weight: bold;
+		}
+	</style>
+	
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.js"></script>
+
+
+	<script type="text/javascript">
+		angular.module("listaTelefonica", ["ngMessages"]);
+
+		angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function($scope){
+			$scope.app = "Lista Telefônica";
+			$scope.contatos = [
+				{nome:"Marco", telefone: "99990000", cor : "blue"},
+				{nome:"Paulo", telefone: "99990001", cor : "red"},
+				{nome:"Jefferson", telefone: "99990002", cor : "yellow"},
+			];
+			$scope.operadoras = [
+				{nome: "Oi", codigo: 14, categoria: "Celular"},
+				{nome: "Vivo", codigo: 15, categoria: "Celular"},
+				{nome: "Tim", codigo: 41, categoria: "Celular"},
+				{nome: "GVT", codigo: 25, categoria: "Fixo"},
+				{nome: "Embratel", codigo: 21, categoria: "Fixo"}
+			];
+			$scope.adicinarContato = function (contato){
+				$scope.contatos.push(angular.copy(contato));
+				delete $scope.contato;
+
+				//voltando os campos do Form em prestine(virgem), para que não mostre as mensagens de preencimento dos campos
+				$scope.contatoForm.$setPristine();
+			};
+			$scope.apagarContatos = function (contatos){
+				//console.log($scope.contatos); //Não é o ideal puxar direto do scope, melhor passar por parâmetro e puxar pelo parametro
+				//console.log(contatos);
+				//Substitui o array original pelo resultado da filtrage dos NÃO selecionados
+				$scope.contatos = contatos.filter(function (contato){
+					if(!contato.selecionado) return contato;
+				});
+
+				//console.log(contatosSelecionados);
+			};	
+			$scope.isContatoSelecionado = function(contatos) {
+				return contatos.some(function(contato){
+				//var isContatoSelecionado = contatos.some(function(contato){
+					//se um dos contato for true, retorna true para a variável isContatoSelecionado
+					return contato.selecionado;
+				});
+				//console.log(isContatoSelecionado);
+			};
+		});
+
+
+
+	</script>
+
+</head>
+<body ng-controller="listaTelefonicaCtrl">
+	<div class="jumbotron">
+		<h4>{{app}}</h4>
+		<table ng-show="contatos.length > 0" class="table ">
+			<tr>
+				<th></th>
+				<th>Nome</th>
+				<th>Telefone</th>
+				<th>Operadora</th>
+				<th></th>
+			</tr>
+			<!--<tr ng-class="{selecionado: contato.selecionado, negrito: contato.selecionado}" ng-repeat="contato in contatos">-->
+			<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos">
+				<td>
+					<input type="checkbox" id="contato-{{$index}}"  ng-model="contato.selecionado" />
+     				<label for="contato-{{$index}}"></label>
+				</td>
+				<td>{{contato.nome}}</td>
+				<td>{{contato.telefone}}</td>
+				<td>{{contato.operadora.nome}}</td>
+				<td><div style="width: 20px; height: 20px;" ng-style="{'background-color' : contato.cor}"></div></td>
+			</tr>
+		</table>
+
+		<hr />
+		<div class="row">
+			<form name="contatoForm" class="col s12" >
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="nome" name="nome" type="text" class="validate" ng-model="contato.nome" ng-required="true" ng-minlength="10" />
+						<label for="nome">Nome</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="telefone" name="telefone" type="text" class="validate" ng-model="contato.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" />
+						<label for="telefone">Telefone</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field">
+						<select class="browser-default"  ng-model="contato.operadora" ng-options="operadora.nome for operadora in operadoras">
+							<option value="" disabled selected>Selecione uma operadora</option>
+						</select>
+					</div>
+				</div>
+
+				<!--
+				Expressão  com cláusula gruop by
+				<div class="row">
+					<div class="input-field">
+						<select class="browser-default"  ng-model="contato.operadora" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras">
+							<option value="" disabled selected>Selecione uma operadora</option>
+						</select>
+					</div>
+				</div>
+				-->
+
+				<div ng-messages="contatoForm.nome.$error">
+					<div ng-message="required" class="">
+						<p>Preencha o campo nome.</p>
+					</div>
+					<div ng-message="minlength" class="">
+						<p>O campo nome deve ter no mínimo 10 caracteres.</p>
+					</div>
+
+				</div>
+
+				<!--
+				<div ng-show="contatoForm.nome.$error.required && contatoForm.nome.$dirty" class="">
+					<p>Preencha o campo nome.</p>
+				</div>
+				<div ng-show="contatoForm.nome.$error.minlength " class="">
+					<p>O campo nome deve ter no mínimo 10 caracteres.</p>
+				</div>
+				-->
+				<div ng-show="contatoForm.telefone.$error.required && contatoForm.telefone.$dirty" class="">
+					<p>Preencha o campo telefone.</p>
+				</div>
+
+				<div ng-show="contatoForm.telefone.$error.pattern" class="">
+					<p>O campo telefone deve ter o formato 00000-0000.</p>
+				</div>
+
+
+				<button class="btn btn-large blue waves-effect waves-light col s12" ng-click="adicinarContato(contato)" ng-disabled="contatoForm.$invalid">Adicionar Contato</button>
+				<br>
+				<!--<button class="btn btn-large red waves-effect waves-light col s12" ng-click="apagarContatos(contatos)" ng-disabled="!isContatoSelecionado(contatos)" >Apagar Contatos</button>-->
+
+				<!--<button class="btn btn-large red waves-effect waves-light col s12" ng-click="apagarContatos(contatos)" ng-show="isContatoSelecionado(contatos)" >Apagar Contatos</button>-->
+				
+				<button class="btn btn-large red waves-effect waves-light col s12" ng-click="apagarContatos(contatos)" ng-if="isContatoSelecionado(contatos)" >Apagar Contatos</button>
+			</form>
+
+		</div>
+	</div>
+
+	<div ng-include="'footer.html'"></div>
+	
+
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script> 
+
+
+</body>
+</html>

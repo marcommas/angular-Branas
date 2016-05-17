@@ -1,0 +1,109 @@
+<html ng-app="listaTelefonica">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Lista Telefonica</title>
+
+	 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="css/lib/materialize-0.97.3.min.css">
+
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/ui.css">
+
+	<script src="js/lib/angular-1.5.5.min.js"></script>
+	<script src="js/lib/angular-messages-1.5.5.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/controllers/listaTelefonicaCtrl.js"></script>
+	<script src="js/services/contatosAPIService.js"></script>
+	<script src="js/services/operadorasAPIService.js"></script>
+	<script src="js/services/serialGeneratorService.js"></script>
+	<script src="js/config/serialGeneratorConfig.js"></script>
+	<script src="js/value/configValue.js"></script>
+	<script src="js/filters/nameFilter.js"></script>
+	<script src="js/filters/ellipsisFilter.js"></script>
+	<script src="js/directives/uiAlertDirective.js"></script>
+
+</head>
+<body ng-controller="listaTelefonicaCtrl">
+	<div class="jumbotron">
+		<h3>{{app}}</h3>
+	
+		<!-- Este ui-alert é um diretiva que se encontra em js/directives/uiAlertDirective
+		Dentro dessa directive, está o caminho para o template deste alert que está em view/alert.html
+		-->
+		<ui-alert title="Ops, aconteceu um problema!!" >{{error}}</ui-alert>
+
+		<input type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando?" class="validate"/>
+		<table ng-show="contatos.length > 0" class="table table-striped">
+			<tr>
+				<th></th>
+				<th>Serial</th>
+				<th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+				<th><a href="" ng-click="ordenarPor('telefone')">Telefone</a></th>
+				<th>Operadora</th>
+				<th>Data</th>
+			</tr>
+			<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+				<td>
+					<input type="checkbox" id="contato-{{$index}}"  ng-model="contato.selecionado" />
+     				<label for="contato-{{$index}}"></label>
+				</td>
+				<td>{{contato.serial}}</td>
+				<td>{{contato.nome | name | ellipsis:15}}</td>
+				<td>{{contato.telefone}}</td>
+				<td>{{contato.operadora.nome}}</td>
+				<td>{{contato.data | date:'dd/MM/yyyy HH:mm'}}</td>
+			</tr>
+		</table>
+		<hr/>
+		<div class="row">
+			<form name="contatoForm" class="col s12">
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="nome" name="nome" type="text" class="validate" ng-model="contato.nome" ng-required="true" ng-minlength="10" />
+						<label for="nome">Nome</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="telefone" name="telefone" type="text" class="validate" ng-model="contato.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" />
+						<label for="telefone">Telefone</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field">
+						<select class="browser-default"  ng-model="contato.operadora" ng-options="operadora.nome for operadora in operadoras | orderBy:'nome'">
+							<option value="" disabled selected>Selecione uma operadora</option>
+						</select>
+					</div>
+				</div>
+
+				<div ng-show="contatoForm.nome.$dirty" ng-messages="contatoForm.nome.$error">
+					<div ng-message="required" class="alert alert-danger">
+						Por favor, preencha o campo nome!
+					</div>
+					<div ng-message="minlength" class="alert alert-danger">
+						O campo nome deve ter no mínimo 10 caracteres.
+					</div>
+				</div>
+
+				<div ng-show="contatoForm.telefone.$error.required && contatoForm.telefone.$dirty" class="alert alert-danger">
+					Por favor, preencha o campo telefone!
+				</div>
+				<div ng-show="contatoForm.telefone.$error.pattern" class="alert alert-danger">
+					O campo telefone deve ter o formato DDDDD-DDDD.
+				</div>
+
+				<button class="btn btn-large blue waves-effect waves-light col s12" ng-click="adicionarContato(contato)" ng-disabled="contatoForm.$invalid">Adicionar Contato</button>
+				<br><br><br>
+				<button class="btn btn-large red waves-effect waves-light col s12" ng-click="apagarContatos(contatos)" ng-if="isContatoSelecionado(contatos)">Apagar Contatos</button>
+			</form>
+		</div>
+
+	</div>
+	<div ng-include="'view/footer.html'"></div>
+
+	<script type="text/javascript" src="js/lib/jquery-2.1.1.min.js"></script>           
+	<script type="text/javascript" src="js/lib/materialize-0.97.3.min.js"></script> 
+</body>
+</html>

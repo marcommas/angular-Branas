@@ -1,0 +1,50 @@
+<div class="jumbotron " >
+	
+	<ui-accordions>
+		<ui-accordion title="Accordion 1">
+		1Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente incidunt assumenda expedita nobis officiis blanditiis quod. Reprehenderit officia et, alias eaque fuga repellendus delectus ducimus neque impedit hic corrupti molestiae!
+		</ui-accordion>
+
+		<ui-accordion title="Accordion 2">
+		2Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit beatae itaque perferendis aut ducimus quia laborum est consequuntur sed dicta minus, incidunt unde asperiores voluptates nesciunt praesentium ipsam quos voluptatum.
+		</ui-accordion>
+
+		<ui-accordion title="Accordion 3">
+		3Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit beatae itaque perferendis aut ducimus quia laborum est consequuntur sed dicta minus, incidunt unde asperiores voluptates nesciunt praesentium ipsam quos voluptatum.
+		</ui-accordion>
+
+		<ui-accordion title="Accordion 4">
+		4Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit beatae itaque perferendis aut ducimus quia laborum est consequuntur sed dicta minus, incidunt unde asperiores voluptates nesciunt praesentium ipsam quos voluptatum.
+		</ui-accordion>
+	</ui-accordions>
+	
+	<hr />
+
+	<h3>{{app}}</h3>
+	<input type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando?" class="validate"/>
+	<table ng-show="contatos.length > 0" class="table table-striped">
+		<tr>
+			<th></th>
+			<th>Serial</th>
+			<th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+			<th><a href="" ng-click="ordenarPor('telefone')">Telefone</a></th>
+			<th>Operadora</th>
+			<th>Data</th>
+		</tr>
+		<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+			<td>
+				<input type="checkbox" id="contato-{{$index}}"  ng-model="contato.selecionado" />
+ 				<label for="contato-{{$index}}"></label>
+			</td>
+			<td>{{contato.serial}}</td>
+			<td><a href="#/detalhesContato/{{contato.id}}">{{contato.nome | name }}</a></td>
+			<td>{{contato.telefone}}</td>
+			<td>{{contato.operadora.nome}}</td>
+			<td>{{contato.data | date:'dd/MM/yyyy HH:mm'}}</td>
+		</tr>
+	</table>
+	<hr/>
+	
+	<a href="#/novoContato" class="btn">Novo Contato</a>
+
+</div>
